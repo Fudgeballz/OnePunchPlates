@@ -1,2 +1,2 @@
-# Nameplate_LastName
-World of Warcraft Default Nameplate - addon to only show last name of mobs
+# One Punch Plates
+World of Warcraft Default Nameplate - Tweeks
