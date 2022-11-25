@@ -1,0 +1,11 @@
+## Interface: 100002
+## Version: 1.0.0
+## Title:|cFF7FFF72One Punch Plates|r
+## Author: Fudgeballz
+## Notes: Dooode
+
+## X-Category: Unit Frames
+## X-Website: https://github.com/Fudgeballz/OnePunchPlates
+## X-Curse-Project-ID: 711530
+
+main.lua
