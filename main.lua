@@ -26,10 +26,10 @@ local function SetFont(obj,optSize)
 	obj:SetFont(fontName,optSize,"THINOUTLINE");
 end
 
-SetFont(SystemFont_LargeNamePlate, 8.6)
-SetFont(SystemFont_NamePlate, 8.6)
-SetFont(SystemFont_LargeNamePlateFixed, 8.6)
-SetFont(SystemFont_NamePlateFixed, 8.6)
+SetFont(SystemFont_LargeNamePlate, 8)
+SetFont(SystemFont_NamePlate, 8)
+SetFont(SystemFont_LargeNamePlateFixed, 8)
+SetFont(SystemFont_NamePlateFixed, 8)
 
 
 --  Move nametag
