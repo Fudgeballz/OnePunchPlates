@@ -1,23 +1,29 @@
 local Frame = CreateFrame("Frame")
-Frame:RegisterEvent("PLAYER_LOGIN")
+Frame:RegisterEvent("ADDON_LOADED")
 
-Frame:SetScript("OnEvent", function(...)
-	SetCVar("nameplateMaxDistance", 45)
-	SetCVar("nameplateMaxScale", 1.0)
-	SetCVar("nameplateMinScale", 1.0)
-	SetCVar("nameplateLargerScale", 1.15)
-	SetCVar("nameplateGlobalScale", 1.15)
-	SetCVar("nameplateSelectedScale", 1.15)
+Frame:SetScript("OnEvent", function(self, event, arg1)
+    if event == "ADDON_LOADED" and arg1 == "onepunchplates" then
+        SetCVar("nameplateMaxDistance", 45)
+        SetCVar("nameplateMaxScale", 0.8)
+        SetCVar("nameplateMinScale", 0.8)
+        SetCVar("nameplateLargerScale", 1)
+        SetCVar("nameplateGlobalScale", 0.8)
+        SetCVar("nameplateSelectedScale", 0.8)
 
-	SetCVar("nameplateLargeBottomInset", -5) 
-	SetCVar("nameplateLargeTopInset", -5) 
-	SetCVar("nameplateOtherTopInset", -5)
-	SetCVar("nameplateOtherBottomInset", -5)
+        SetCVar("nameplateLargeBottomInset", -5) 
+        SetCVar("nameplateLargeTopInset", -5) 
+        SetCVar("nameplateOtherTopInset", -5)
+        SetCVar("nameplateOtherBottomInset", -5)
 
-	SetCVar('UnitNameGuildTitle', 0)
-	SetCVar('UnitNamePlayerPVPTitle', 0)
-	SetCVar("nameplateOverlapV", 0.6)
-	SetCVar("nameplateOccludedAlphaMult", 0.4)
+        SetCVar('UnitNameGuildTitle', 0)
+        SetCVar('UnitNamePlayerPVPTitle', 0)
+        SetCVar("nameplateOverlapV", 0.6)
+        SetCVar("nameplateOccludedAlphaMult", 0.4)
+
+        SetCVar('nameplateShowOnlyNames', 1)
+        SetCVar('nameplateShowDebuffsOnFriendly', 0)
+        SetCVar('nameplateShowAll', 1)
+    end
 end)
 
 --  Nametag font size
@@ -30,7 +36,6 @@ SetFont(SystemFont_LargeNamePlate, 8)
 SetFont(SystemFont_NamePlate, 8)
 SetFont(SystemFont_LargeNamePlateFixed, 8)
 SetFont(SystemFont_NamePlateFixed, 8)
-
 
 --  Move nametag
 hooksecurefunc("DefaultCompactNamePlateFrameAnchorInternal",function(frame)
@@ -49,7 +54,7 @@ hooksecurefunc("CompactUnitFrame_UpdateName",function(frame)
 		else -- If unit not in combat.
 			frame.name:SetVertexColor(1, 1, 1, 1) -- White.
 		end		
-		-- frame.name:Show()
+		frame.name:Show()
 	end
 end);
 
@@ -93,24 +98,12 @@ hooksecurefunc("CompactUnitFrame_UpdateHealthBorder", function(frame)
 
 		if C_NamePlate.GetNamePlateForUnit(frame.unit) ~= C_NamePlate.GetNamePlateForUnit("player") and frame.level then
 			if threat == 3 then --3 = Securely tanking; make borders red.
-				if ImprovedNameplatesDB.showLevels then
-					frame.level.texture:SetVertexColor(1, 0, 0, 1)
-				end
 				frame.healthBar.border:SetVertexColor(1, 0, 0, 1)
 			elseif threat == 2 then -- 2 = Tanking, but somebody else has higher threat (losing threat); make borders orange.
-				if ImprovedNameplatesDB.showLevels then
-					frame.level.texture:SetVertexColor(1, 0.5, 0, 1)
-				end
 				frame.healthBar.border:SetVertexColor(1, 0.5, 0, 1)
 			elseif threat == 1 then -- 1 = Not tanking, but higher threat than tank; make borders yellow.
-				if ImprovedNameplatesDB.showLevels then
-					frame.level.texture:SetVertexColor(1, 1, 0.4, 1)
-				end
 				frame.healthBar.border:SetVertexColor(1, 1, 0.4, 1)
 			else -- 0 = Not tanking; make borders black.
-				if ImprovedNameplatesDB.showLevels then
-					frame.level.texture:SetVertexColor(0, 0, 0, 1)
-				end
 				frame.healthBar.border:SetVertexColor(0, 0, 0, 1)
 			end
 		else
