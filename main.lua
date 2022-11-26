@@ -87,30 +87,18 @@ end)
 
 -- Threat display.
 hooksecurefunc("CompactUnitFrame_UpdateHealthBorder", function(frame)
-	if frame.optionTable.colorNameBySelection and not frame:IsForbidden() then
+	if not frame:IsForbidden() then
 		-- Colorize unit frame depending on threat.
 		local threat = UnitThreatSituation("player", frame.unit) -- Gets unit threat level, 3 = tanking, 2 = insecurely tanking/losing threat, 1/0 = not tanking.
 
 		if C_NamePlate.GetNamePlateForUnit(frame.unit) ~= C_NamePlate.GetNamePlateForUnit("player") and frame.level then
 			if threat == 3 then --3 = Securely tanking; make borders red.
-				if ImprovedNameplatesDB.showLevels then
-					frame.level.texture:SetVertexColor(1, 0, 0, 1)
-				end
 				frame.healthBar.border:SetVertexColor(1, 0, 0, 1)
 			elseif threat == 2 then -- 2 = Tanking, but somebody else has higher threat (losing threat); make borders orange.
-				if ImprovedNameplatesDB.showLevels then
-					frame.level.texture:SetVertexColor(1, 0.5, 0, 1)
-				end
 				frame.healthBar.border:SetVertexColor(1, 0.5, 0, 1)
 			elseif threat == 1 then -- 1 = Not tanking, but higher threat than tank; make borders yellow.
-				if ImprovedNameplatesDB.showLevels then
-					frame.level.texture:SetVertexColor(1, 1, 0.4, 1)
-				end
 				frame.healthBar.border:SetVertexColor(1, 1, 0.4, 1)
-			else -- 0 = Not tanking; make borders black.
-				if ImprovedNameplatesDB.showLevels then
-					frame.level.texture:SetVertexColor(0, 0, 0, 1)
-				end
+						else -- 0 = Not tanking; make borders black.
 				frame.healthBar.border:SetVertexColor(0, 0, 0, 1)
 			end
 		else
