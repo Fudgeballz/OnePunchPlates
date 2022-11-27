@@ -1,8 +1,22 @@
-local Frame = CreateFrame("Frame")
-Frame:RegisterEvent("ADDON_LOADED")
+--  Nametag font size
+local function SetFont(obj,optSize)
+	local fontName=obj:GetFont();
+	obj:SetFont(fontName,optSize,"THINOUTLINE");
+end
 
+-- Moves enemy debuffs down closer to their nameplate
+local function fn(...)
+	for _,v in pairs(C_NamePlate.GetNamePlates()) do
+		local bf = v.UnitFrame.BuffFrame
+		bf.baseYOffset = 0
+		bf:UpdateAnchor()
+	end
+end
+NamePlateDriverFrame:HookScript("OnEvent",fn)
+
+local Frame = CreateFrame("Frame")
+Frame:RegisterEvent("PLAYER_LOGIN")
 Frame:SetScript("OnEvent", function(self, event, arg1)
-    if event == "ADDON_LOADED" and arg1 == "onepunchplates" then
         SetCVar("nameplateMaxDistance", 45)
         SetCVar("nameplateMaxScale", 0.8)
         SetCVar("nameplateMinScale", 0.8)
@@ -23,19 +37,14 @@ Frame:SetScript("OnEvent", function(self, event, arg1)
         SetCVar('nameplateShowOnlyNames', 1)
         SetCVar('nameplateShowDebuffsOnFriendly', 0)
         SetCVar('nameplateShowAll', 1)
-    end
+
+		SetFont(SystemFont_LargeNamePlate, 8)
+		SetFont(SystemFont_NamePlate, 8)
+		SetFont(SystemFont_LargeNamePlateFixed, 8)
+		SetFont(SystemFont_NamePlateFixed, 8)		
+
+		print("One Punch Plates Loaded Successfully")
 end)
-
---  Nametag font size
-local function SetFont(obj,optSize)
-	local fontName=obj:GetFont();
-	obj:SetFont(fontName,optSize,"THINOUTLINE");
-end
-
-SetFont(SystemFont_LargeNamePlate, 8)
-SetFont(SystemFont_NamePlate, 8)
-SetFont(SystemFont_LargeNamePlateFixed, 8)
-SetFont(SystemFont_NamePlateFixed, 8)
 
 --  Move nametag
 hooksecurefunc("DefaultCompactNamePlateFrameAnchorInternal",function(frame)
@@ -68,7 +77,21 @@ hooksecurefunc(NameplateBuffContainerMixin,"UpdateAnchor",function(self)
         local offset=self:GetBaseYOffset()+((unit and UnitIsUnit(unit,"target")) and self:GetTargetYOffset() or 0);
         self:SetPoint("BOTTOM",parent,"TOP",0,-20);--    Apply offset here
     end--   We'll leave the false side of this alone to preserve the original anchor in that case
-end);
+end)
+
+--Fix BuffFrame placement.
+hooksecurefunc(NameplateBuffContainerMixin, "UpdateAnchor", function(self)
+	if not self:IsForbidden() then
+		local isTarget = self:GetParent().unit and UnitIsUnit(self:GetParent().unit, "target")
+		local targetYOffset = self:GetBaseYOffset() + (isTarget and self:GetTargetYOffset() or 0.0)
+
+		if self:GetParent().unit and UnitGUID(self:GetParent().unit) ~= UnitGUID("player") then
+			self:SetPoint("BOTTOM", self:GetParent(), "TOP", 0, targetYOffset)
+		else
+			self:SetPoint("BOTTOM", self:GetParent().healthBar, "TOP", 0, 5 + targetYOffset)
+		end
+	end
+end)
 
 -- nameplate buff size
 hooksecurefunc(NameplateBuffContainerMixin,"OnLoad",function(self)
@@ -76,19 +99,19 @@ hooksecurefunc(NameplateBuffContainerMixin,"OnLoad",function(self)
 end);
 
 -- Colorize unit name when they are in combat.
-local cleuFrame = CreateFrame("frame")
-cleuFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-cleuFrame:SetScript("OnEvent", function(self, event)
-	for _, frame in pairs(C_NamePlate.GetNamePlates()) do
-		if CompactUnitFrame_IsTapDenied(frame.UnitFrame) then -- If unit has been tapped (opposite faction, or 5+ players of your faction.)
-			frame.UnitFrame.name:SetVertexColor(0.5, 0.5, 0.5, 1) -- Grey.
-		elseif UnitAffectingCombat(frame.UnitFrame.unit) and UnitCanAttack("player", frame.UnitFrame.unit) and not UnitIsPlayer(frame.UnitFrame.unit) then -- If unit is in combat, only for attackable NPCs.
-			frame.UnitFrame.name:SetVertexColor(1, 0, 0, 1) -- Red.
-		else -- If unit not in combat.
-			frame.UnitFrame.name:SetVertexColor(1, 1, 1, 1) -- White.
-		end
-	end
-end)
+-- local cleuFrame = CreateFrame("frame")
+-- cleuFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+-- cleuFrame:SetScript("OnEvent", function(self, event)
+-- 	for _, frame in pairs(C_NamePlate.GetNamePlates()) do
+-- 		if CompactUnitFrame_IsTapDenied(frame.UnitFrame) then -- If unit has been tapped (opposite faction, or 5+ players of your faction.)
+-- 			frame.UnitFrame.name:SetVertexColor(0.5, 0.5, 0.5, 1) -- Grey.
+-- 		elseif UnitAffectingCombat(frame.UnitFrame.unit) and UnitCanAttack("player", frame.UnitFrame.unit) and not UnitIsPlayer(frame.UnitFrame.unit) then -- If unit is in combat, only for attackable NPCs.
+-- 			frame.UnitFrame.name:SetVertexColor(1, 0, 0, 1) -- Red.
+-- 		else -- If unit not in combat.
+-- 			frame.UnitFrame.name:SetVertexColor(1, 1, 1, 1) -- White.
+-- 		end
+-- 	end
+-- end)
 
 -- Threat display.
 hooksecurefunc("CompactUnitFrame_UpdateHealthBorder", function(frame)
